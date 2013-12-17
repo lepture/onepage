@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Onepage</title>
+  <link rel="stylesheet" href="build/build.css">
+  <style>
+    html, body { margin: 0; padding: 0}
+  </style>
+</head>
+<body>
+  <div id="onepage">
+    <div class="section" style="background:green"></div>
+    <div class="section" style="background:blue"></div>
+    <div class="section" style="background:red"></div>
+  </div>
+  <script src="build/build.js"></script>
+  <script>
+    var Onepage = require('onepage');
+    var onepage = new Onepage(document.getElementById('onepage'));
+  </script>
+</body>
+</html>
