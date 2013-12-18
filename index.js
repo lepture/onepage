@@ -17,7 +17,7 @@ function Onepage(element, options) {
   // {
   //   duration: 800,
   //   timingFunction: 'ease',
-  //   period: 500
+  //   period: 300
   // }
   options = options || {};
 
@@ -81,7 +81,7 @@ Onepage.prototype.setup = function() {
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
     var now = new Date().getTime();
-    var period = (me.options.period || 500) + me.options.duration;
+    var period = (me.options.period || 300) + me.options.duration;
     if (!me.transitioned || now - me.transitioned > period) {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
