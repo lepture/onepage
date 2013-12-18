@@ -161,7 +161,7 @@ Onepage.prototype.move = function(page) {
   // emit events
   me.emit('move', page);
   setTimeout(function() {
-    me.emit('finish', page);
+    me.emit('end', page);
   }, me.options.duration);
 
   // update status
