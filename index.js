@@ -26,12 +26,23 @@ function Onepage(element, options) {
   var children = element.childNodes;
   var sections = [];
 
+  // create pagination.
+  var pagination = document.createElement('div');
+  pagination.className = 'onepage-pagination';
+
   for (var i = 0; i < children.length; i++) {
     (function(node) {
       if (node.nodeType === document.ELEMENT_NODE) {
         node.className += ' onepage-element';
         node.style.position = 'absolute';
         node.style.top = sections.length * 100 + '%';
+        var page = document.createElement('a');
+        page.href = '#' + sections.length;
+        page.id = 'onepage-pagination-' + sections.length;
+        if (!sections.length) {
+          page.className = 'active';
+        }
+        pagination.appendChild(page);
         sections.push(node);
       }
     })(children[i]);
@@ -56,15 +67,17 @@ function Onepage(element, options) {
   this.options = options;
   this.element = element;
   this.sections = sections;
+  this.pagination = pagination;
   this.setup();
 }
 emitter(Onepage.prototype);
 
 /**
- * Bind events for scrolling.
+ * Setup everything for onepage scrolling.
  */
 Onepage.prototype.setup = function() {
   var me = this;
+  // events binding
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
     var now = new Date().getTime();
@@ -79,28 +92,55 @@ Onepage.prototype.setup = function() {
       }
     }
   });
+
+  // setup pagination
+  var pagination = me.pagination;
+  var pages = pagination.getElementsByTagName('a');
+  for (var i = 0; i < pages.length; i++) {
+    (function(i) {
+      events.bind(pages[i], 'click', function(e) {
+        e.preventDefault();
+        me.move(i);
+      });
+    })(i);
+  }
+  document.body.appendChild(pagination);
+  pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
 };
 
 /**
  * Change current page to the given page.
  */
 Onepage.prototype.move = function(page) {
+  var me = this;
   // reset page value for safety
   if (page < 0) {
     page = 0;
   }
-  if (page > this.sections.length - 1) {
-    page = this.sections.length - 1;
+  if (page > me.sections.length - 1) {
+    page = me.sections.length - 1;
   }
-  this.page = page;
+
+  var pagination = me.pagination;
+  // clear pagination active before
+  var item = pagination.childNodes[me.page];
+  item.className = '';
+  // activate current pagination
+  item = pagination.childNodes[page];
+  item.className = 'active';
+
   var percent = page * 100 + '%';
-  stylish(this.element, 'transform', 'translate3d(0,-' + percent + ',0)');
-  this.emit('move', page);
-  var me = this;
+  stylish(me.element, 'transform', 'translate3d(0,-' + percent + ',0)');
+
+  // emit events
+  me.emit('move', page);
   setTimeout(function() {
     me.emit('finish', page);
   }, me.options.duration);
-  this.transitioned = new Date().getTime();
+
+  // update status
+  me.page = page;
+  me.transitioned = new Date().getTime();
 };
 
 
