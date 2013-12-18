@@ -14,41 +14,53 @@ var emitter = require('emitter');
  */
 function Onepage(element, options) {
   options = options || {};
-  options.duration = options.duration || 800;
-  options.timingFunction = options.timingFunction || 'ease';
-  options.period = options.period || 300;
-  options.wheelDelta = options.wheelDelta || 100;
+  merge(options, {
+    duration: 800,
+    timingFunction: 'ease',
+    period: 300,
+    wheelDelta: 100,
+    pagination: true,
+    keyboard: true,
+    loop: 'down'
+  });
 
   var children = element.childNodes;
   var pages = [];
 
-  // create pagination.
-  var pagination = document.createElement('div');
-  pagination.className = 'onepage-pagination';
+  var pagination;
+  if (options.pagination) {
+    // create pagination.
+    pagination = document.createElement('div');
+    pagination.className = 'onepage-pagination';
+  }
 
   for (var i = 0; i < children.length; i++) {
     (function(node) {
       if (node.nodeType === document.ELEMENT_NODE) {
         node.className += ' onepage-element';
         node.style.top = pages.length * 100 + '%';
-        var page = document.createElement('a');
-        page.href = '#' + pages.length;
-        page.id = 'onepage-pagination-' + pages.length;
-        if (!pages.length) {
-          page.className = 'active';
+
+        if (pagination) {
+          var page = document.createElement('a');
+          page.href = '#' + pages.length;
+          page.id = 'onepage-pagination-' + pages.length;
+          if (!pages.length) {
+            page.className = 'active';
+          }
+
+          // pagination with title
+          if (node.title) {
+            var explain = document.createElement('span');
+            explain.className = 'text-title';
+            explain.innerHTML = node.title;
+            page.appendChild(explain);
+            // clear node title
+            node.title = '';
+          }
+
+          pagination.appendChild(page);
         }
 
-        // pagination with title
-        if (node.title) {
-          var explain = document.createElement('span');
-          explain.className = 'text-title';
-          explain.innerHTML = node.title;
-          page.appendChild(explain);
-          // clear node title
-          node.title = '';
-        }
-
-        pagination.appendChild(page);
         pages.push(node);
       }
     })(children[i]);
@@ -145,18 +157,20 @@ Onepage.prototype.setup = function() {
 
   // setup pagination
   var pagination = me.pagination;
-  var pages = pagination.getElementsByTagName('a');
-  for (var i = 0; i < pages.length; i++) {
-    (function(i) {
-      events.bind(pages[i], 'click', function(e) {
-        e.preventDefault();
-        me.move(i);
-      });
-    })(i);
+  if (pagination) {
+    var pages = pagination.getElementsByTagName('a');
+    for (var i = 0; i < pages.length; i++) {
+      (function(i) {
+        events.bind(pages[i], 'click', function(e) {
+          e.preventDefault();
+          me.move(i);
+        });
+      })(i);
+    }
+    document.body.appendChild(pagination);
+    // pagination be the vertical middle
+    pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
   }
-  document.body.appendChild(pagination);
-  // pagination be the vertical middle
-  pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
 };
 
 /**
@@ -173,12 +187,14 @@ Onepage.prototype.move = function(page) {
   }
 
   var pagination = me.pagination;
-  // clear pagination active before
-  var item = pagination.childNodes[me.page];
-  item.className = '';
-  // activate current pagination
-  item = pagination.childNodes[page];
-  item.className = 'active';
+  if (pagination) {
+    // clear pagination active before
+    var item = pagination.childNodes[me.page];
+    item.className = '';
+    // activate current pagination
+    item = pagination.childNodes[page];
+    item.className = 'active';
+  }
 
   stylish(
     me.element, 'transform', 'translate3d(0,-' + page * 100 + '%,0)'
@@ -218,6 +234,16 @@ function stylish(node, key, value) {
   }
 
   return browser;
+}
+
+function merge(obj, params) {
+  for (var key in params) {
+    (function(key) {
+      if (obj[key] === undefined) {
+        obj[key] = params[key];
+      }
+    })(key);
+  }
 }
 
 module.exports = Onepage;
