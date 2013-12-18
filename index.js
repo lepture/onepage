@@ -81,6 +81,15 @@ emitter(Onepage.prototype);
  */
 Onepage.prototype.setup = function() {
   var me = this;
+
+  var pageDown = function() {
+    if (me.page >= me.sections.length - 1) {
+      me.move(0);
+    } else {
+      me.move(me.page + 1);
+    }
+  };
+
   // binding mousewheel
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
@@ -89,24 +98,47 @@ Onepage.prototype.setup = function() {
     if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
-      } else if (me.page >= me.sections.length - 1) {
-        me.move(0);
       } else {
-        me.move(me.page + 1);
+        pageDown();
       }
     }
   });
+
+  // binding touch event
+  events.bind(document, 'touchstart', function(e) {
+    var x, y;
+    var touches = e.touches;
+    if (touches && touches.length) {
+      x = touches[0].pageX;
+      y = touches[0].pageY;
+
+      var touchmove = function(e) {
+        if (e.touches && e.touches.length) {
+          var deltaX = x - e.touches[0].pageX;
+          var deltaY = y - e.touches[0].pageY;
+          if (deltaY >= 50) {
+            // swipe down
+            pageDown();
+          } else if (deltaY <= -50) {
+            // swipe up
+            me.move(me.page - 1);
+          }
+          if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
+            events.unbind(document, 'touchmove', touchmove);
+          }
+        }
+      };
+
+      events.bind(document, 'touchmove', touchmove);
+    }
+  }, false);
 
   // binding up and down key
   events.bind(document, 'keydown', function(e) {
     if (e.keyCode === 38) {
       me.move(me.page - 1);
     } else if (e.keyCode === 40) {
-      if (me.page >= me.sections.length - 1) {
-        me.move(0);
-      } else {
-        me.move(me.page + 1);
-      }
+      pageDown();
     }
   });
 
