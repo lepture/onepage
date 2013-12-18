@@ -7,11 +7,62 @@
   <link rel="stylesheet" href="build/build.css">
   <style>
     html, body { margin: 0; padding: 0}
+    #onepage {
+      font: 500 16px/1.6 "Lucida Grande", "Helvetica Neue", sans-serif;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    #onepage a {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    #onepage h1 {
+      margin-top: 100px;
+    }
+    #onepage pre {
+      color: white;
+    }
+    #onepage .copyright {
+      font-size: 12px;
+      margin-bottom: 80px;
+    }
+    #onepage .github {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      padding: 10px 30px;
+      font-weight: bold;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.9);
+    }
+    #onepage .github:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
   </style>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-21475122-5']);
+    _gaq.push(['_setCustomVar', 1, 'Repo', 'lepture/onepage']);
+    _gaq.push(['_trackPageview']);
+    _gaq.push(['_trackPageLoadTime']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      if (location.port) {
+        return;
+      }
+      ga.src = '//www.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
 </head>
 <body>
   <div id="onepage">
-    <div style="background-color:#0e90d2" title="Home"></div>
+    <div id="homepage" style="background-color:#0e90d2" title="GitHub">
+      <h1>Onepage</h1>
+      <p>Onepage scroll webpage in component, inspired by Apple iPhone-5c page.</p>
+      <pre>$ component install lepture/onepage</pre>
+      <p class="copyright">Created by <a href="http://lepture.com/">Hsiaoming Yang</a>.</p>
+      <a class="github" href="https://github.com/lepture/onepage">Fork me on GitHub</a>
+    </div>
     <div style="background-color:#8058a5"></div>
     <div style="background-color:#5eb95e"></div>
     <div style="background-color:#dd514c"></div>
