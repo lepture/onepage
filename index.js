@@ -21,8 +21,6 @@ function Onepage(element, options) {
   // }
   options = options || {};
 
-  element.className += ' onepage-container';
-
   var children = element.childNodes;
   var sections = [];
 
@@ -34,7 +32,6 @@ function Onepage(element, options) {
     (function(node) {
       if (node.nodeType === document.ELEMENT_NODE) {
         node.className += ' onepage-element';
-        node.style.position = 'absolute';
         node.style.top = sections.length * 100 + '%';
         var page = document.createElement('a');
         page.href = '#' + sections.length;
@@ -60,14 +57,16 @@ function Onepage(element, options) {
   }
 
   stylish(
-    element,
-    'transitionTimingFunction', options.timingFunction || 'ease'
+    element, 'transitionTimingFunction',
+    options.timingFunction || 'ease'
   );
 
   options.duration = options.duration || 800;
   var prefix = stylish(
     element, 'transitionDuration', options.duration + 'ms'
   );
+
+  element.className += ' onepage-container';
 
   // current active page
   this.page = 0;
@@ -129,6 +128,7 @@ Onepage.prototype.setup = function() {
     })(i);
   }
   document.body.appendChild(pagination);
+  // pagination be the vertical middle
   pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
 };
 
@@ -153,8 +153,9 @@ Onepage.prototype.move = function(page) {
   item = pagination.childNodes[page];
   item.className = 'active';
 
-  var percent = page * 100 + '%';
-  stylish(me.element, 'transform', 'translate3d(0,-' + percent + ',0)');
+  stylish(
+    me.element, 'transform', 'translate3d(0,-' + page * 100 + '%,0)'
+  );
 
   // emit events
   me.emit('move', page);
