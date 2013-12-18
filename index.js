@@ -13,6 +13,9 @@ var emitter = require('emitter');
  * Interface of onepage.
  */
 function Onepage(element, options) {
+  if (!(this instanceof Onepage)) {
+    return new Onepage(element, options);
+  }
   options = options || {};
   merge(options, {
     duration: 800,
