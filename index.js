@@ -1,7 +1,7 @@
 /**
  * Onepage
  *
- * A component inspired by jQuery Onepage.
+ * A component inspired by Apple iPhone-5c page.
  *
  * Copyright (c) 2013 by Hsiaoming Yang.
  */
@@ -90,9 +90,10 @@ Onepage.prototype.setup = function() {
   // binding mousewheel
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
-    var now = new Date().getTime();
+    var delta = new Date().getTime() - (me.transitioned || 0);
     var period = (me.options.period || 300) + me.options.duration;
-    if (!me.transitioned || now - me.transitioned > period) {
+    var wheelDelta = me.options.wheelDelta || 100;
+    if (delta > period && Math.abs(e.wheelDelta) > wheelDelta) {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
       } else if (me.page >= me.sections.length - 1) {
