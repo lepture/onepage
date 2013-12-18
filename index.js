@@ -91,7 +91,7 @@ Onepage.prototype.setup = function() {
   };
 
   // binding mousewheel
-  events.bind(document, 'mousewheel', function(e) {
+  events.bind(me.element, 'mousewheel', function(e) {
     e.preventDefault();
     var delta = new Date().getTime() - (me.transitioned || 0);
     var period = me.options.period + me.options.duration;
@@ -105,7 +105,7 @@ Onepage.prototype.setup = function() {
   });
 
   // binding touch event
-  events.bind(document, 'touchstart', function(e) {
+  events.bind(me.element, 'touchstart', function(e) {
     var x, y;
     var touches = e.touches;
     if (touches && touches.length) {
@@ -125,17 +125,17 @@ Onepage.prototype.setup = function() {
             me.move(me.page - 1);
           }
           if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
-            events.unbind(document, 'touchmove', touchmove);
+            events.unbind(me.element, 'touchmove', touchmove);
           }
         }
       };
 
-      events.bind(document, 'touchmove', touchmove);
+      events.bind(me.element, 'touchmove', touchmove);
     }
   }, false);
 
   // binding up and down key
-  events.bind(document, 'keydown', function(e) {
+  events.bind(me.element, 'keydown', function(e) {
     if (e.keyCode === 38) {
       me.move(me.page - 1);
     } else if (e.keyCode === 40) {
