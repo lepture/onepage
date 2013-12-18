@@ -33,9 +33,12 @@ element is the father node of each page. For example:
 
 You can control the animation by options.
 
-- **duration**: transform duration for scrolling, default is 800.
-- **timingFunction**: function for transform, default is ease.
-- **wheelDelta**: min wheelDelta value for scrolling, default is 100.
+- **duration**: transform duration for scrolling, default is `800`.
+- **timingFunction**: function for transform, default is `ease`.
+- **wheelDelta**: min wheelDelta value for scrolling, default is `100`.
+- **pagination**: create pagination or not, default is `true`.
+- **keyboard**: bind keyboard control or not, default is `true`.
+- **loop**: loop control, default is `down`, other options are: `up` and `both`.
 
 ### events
 
