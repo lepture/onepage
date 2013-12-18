@@ -33,9 +33,9 @@ element is the father node of each page. For example:
 
 You can control the animation by options.
 
-- duration: transform duration for scrolling, default is 800.
-- timingFunction: function for transform, default is ease.
-- wheelDelta: min wheelDelta value for scrolling, default is 100.
+- **duration**: transform duration for scrolling, default is 800.
+- **timingFunction**: function for transform, default is ease.
+- **wheelDelta**: min wheelDelta value for scrolling, default is 100.
 
 ### events
 
@@ -47,12 +47,17 @@ onepage.on('move', function(page) {
 });
 ```
 
-- move: when page moves
-- end: when animation end
+- **move(page)**: when page moves
+- **end(page)**: when animation end
+
+You can subscribe events with: `on`, `once`. You can remove an event with
+`off`.
+
+Learn more about event emitter at [component/emitter](https://github.com/component/emitter).
 
 ### .move(page)
 
-Move the the given page number. Page begin with 0.
+Move to the the given page number. Page begin with 0.
 
 ```js
 onepage.move(2)
