@@ -147,13 +147,15 @@ Onepage.prototype.setup = function() {
   }, false);
 
   // binding up and down key
-  events.bind(me.element, 'keydown', function(e) {
-    if (e.keyCode === 38) {
-      me.move(me.page - 1);
-    } else if (e.keyCode === 40) {
-      pageDown();
-    }
-  });
+  if (me.options.keyboard) {
+    events.bind(document, 'keydown', function(e) {
+      if (e.keyCode === 38) {
+        me.move(me.page - 1);
+      } else if (e.keyCode === 40) {
+        pageDown();
+      }
+    });
+  }
 
   // setup pagination
   var pagination = me.pagination;
