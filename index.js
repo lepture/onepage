@@ -20,7 +20,7 @@ function Onepage(element, options) {
   options.wheelDelta = options.wheelDelta || 100;
 
   var children = element.childNodes;
-  var sections = [];
+  var pages = [];
 
   // create pagination.
   var pagination = document.createElement('div');
@@ -30,11 +30,11 @@ function Onepage(element, options) {
     (function(node) {
       if (node.nodeType === document.ELEMENT_NODE) {
         node.className += ' onepage-element';
-        node.style.top = sections.length * 100 + '%';
+        node.style.top = pages.length * 100 + '%';
         var page = document.createElement('a');
-        page.href = '#' + sections.length;
-        page.id = 'onepage-pagination-' + sections.length;
-        if (!sections.length) {
+        page.href = '#' + pages.length;
+        page.id = 'onepage-pagination-' + pages.length;
+        if (!pages.length) {
           page.className = 'active';
         }
 
@@ -49,7 +49,7 @@ function Onepage(element, options) {
         }
 
         pagination.appendChild(page);
-        sections.push(node);
+        pages.push(node);
       }
     })(children[i]);
   }
@@ -70,7 +70,7 @@ function Onepage(element, options) {
 
   this.options = options;
   this.element = element;
-  this.sections = sections;
+  this.pages = pages;
   this.pagination = pagination;
   this.setup();
 }
@@ -83,7 +83,7 @@ Onepage.prototype.setup = function() {
   var me = this;
 
   var pageDown = function() {
-    if (me.page >= me.sections.length - 1) {
+    if (me.page >= me.pages.length - 1) {
       me.move(0);
     } else {
       me.move(me.page + 1);
@@ -168,8 +168,8 @@ Onepage.prototype.move = function(page) {
   if (page < 0) {
     page = 0;
   }
-  if (page > me.sections.length - 1) {
-    page = me.sections.length - 1;
+  if (page > me.pages.length - 1) {
+    page = me.pages.length - 1;
   }
 
   var pagination = me.pagination;
