@@ -93,12 +93,21 @@ emitter(Onepage.prototype);
  */
 Onepage.prototype.setup = function() {
   var me = this;
+  var loop = me.options.loop;
 
   var pageDown = function() {
-    if (me.page >= me.pages.length - 1) {
-      me.move(0);
-    } else {
+    if (me.page < me.pages.length - 1) {
       me.move(me.page + 1);
+    } else if (loop === 'down' || loop === 'both') {
+      me.move(0);
+    }
+  };
+
+  var pageUp = function() {
+    if (me.page > 0) {
+      me.move(me.page - 1);
+    } else if (loop === 'up' || loop === 'both') {
+      me.move(me.pages.length - 1);
     }
   };
 
@@ -109,7 +118,7 @@ Onepage.prototype.setup = function() {
     var period = me.options.period + me.options.duration;
     if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
       if (e.wheelDelta > 0) {
-        me.move(me.page - 1);
+        pageUp();
       } else {
         pageDown();
       }
@@ -130,11 +139,9 @@ Onepage.prototype.setup = function() {
           var deltaX = x - e.touches[0].pageX;
           var deltaY = y - e.touches[0].pageY;
           if (deltaY >= 50) {
-            // swipe down
             pageDown();
           } else if (deltaY <= -50) {
-            // swipe up
-            me.move(me.page - 1);
+            pageUp();
           }
           if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
             events.unbind(me.element, 'touchmove', touchmove);
@@ -150,7 +157,7 @@ Onepage.prototype.setup = function() {
   if (me.options.keyboard) {
     events.bind(document, 'keydown', function(e) {
       if (e.keyCode === 38) {
-        me.move(me.page - 1);
+        pageUp();
       } else if (e.keyCode === 40) {
         pageDown();
       }
