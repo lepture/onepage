@@ -6,10 +6,19 @@
  * Copyright (c) 2013 by Hsiaoming Yang.
  */
 
+var events = require('event');
+var emitter = require('emitter');
+
 /**
  * Interface of onepage.
  */
 function Onepage(element, options) {
+  // default values of options
+  // {
+  //   duration: 800,
+  //   timingFunction: 'ease',
+  //   period: 500
+  // }
   options = options || {};
 
   element.className += ' onepage-container';
@@ -49,24 +58,27 @@ function Onepage(element, options) {
   this.sections = sections;
   this.setup();
 }
+emitter(Onepage.prototype);
 
 /**
  * Bind events for scrolling.
  */
 Onepage.prototype.setup = function() {
   var me = this;
-  document.addEventListener('mousewheel', function(e) {
+  events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
     var now = new Date().getTime();
     var period = (me.options.period || 500) + me.options.duration;
     if (!me.transitioned || now - me.transitioned > period) {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
+      } else if (me.page >= me.sections.length - 1) {
+        me.move(0);
       } else {
         me.move(me.page + 1);
       }
     }
-  }, false);
+  });
 };
 
 /**
@@ -83,6 +95,11 @@ Onepage.prototype.move = function(page) {
   this.page = page;
   var percent = page * 100 + '%';
   stylish(this.element, 'transform', 'translate3d(0,-' + percent + ',0)');
+  this.emit('move', page);
+  var me = this;
+  setTimeout(function() {
+    me.emit('finish', page);
+  }, me.options.duration);
   this.transitioned = new Date().getTime();
 };
 

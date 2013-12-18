@@ -4,7 +4,10 @@
   "description": "Onepage scroll webpage in component.",
   "version": "0.1.0",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "component/event": "*",
+    "component/emitter": "*"
+  },
   "development": {},
   "license": "MIT",
   "scripts": [
