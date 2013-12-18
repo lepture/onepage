@@ -31,10 +31,30 @@
   z-index: 5;
 }
 .onepage-pagination a {
+  position: relative;
   display: block;
   padding: 10px;
   width: 4px;
   height: 4px;
+}
+.onepage-pagination .text-title {
+  position: absolute;
+  top: 4px;
+  right: 26px;
+  padding-right: 5px;
+  color: rgba(0, 0, 0, 0.56);
+  line-height: 1;
+  font-size: 14px;
+  font-family: "Lucida Grande", "Helvetica Neue", sans-serif;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease;
+  -moz-transition: opacity 0.3s ease;
+  -ms-transition: opacity 0.3s ease;
+  -o-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+.onepage-pagination a:hover .text-title {
+  opacity: 1;
 }
 .onepage-pagination a:before {
   display: block;

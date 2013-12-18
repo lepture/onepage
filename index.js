@@ -42,6 +42,17 @@ function Onepage(element, options) {
         if (!sections.length) {
           page.className = 'active';
         }
+
+        // pagination with title
+        if (node.title) {
+          var explain = document.createElement('span');
+          explain.className = 'text-title';
+          explain.innerHTML = node.title;
+          page.appendChild(explain);
+          // clear node title
+          node.title = '';
+        }
+
         pagination.appendChild(page);
         sections.push(node);
       }
