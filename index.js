@@ -113,6 +113,7 @@ Onepage.prototype.setup = function() {
       y = touches[0].pageY;
 
       var touchmove = function(e) {
+        e.preventDefault();
         if (e.touches && e.touches.length) {
           var deltaX = x - e.touches[0].pageX;
           var deltaY = y - e.touches[0].pageY;
