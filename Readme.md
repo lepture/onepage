@@ -64,6 +64,26 @@ onepage.move(2)
 // move to the 3rd page.
 ```
 
+### .page
+
+Current active page number.
+
+### .element
+
+The container element.
+
+### .pages
+
+Array of pages in the container.
+
+### .pagination
+
+Pagination element.
+
+### .transitioned
+
+Last animation time.
+
 ## License
 
 MIT
