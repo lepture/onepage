@@ -13,13 +13,11 @@ var emitter = require('emitter');
  * Interface of onepage.
  */
 function Onepage(element, options) {
-  // default values of options
-  // {
-  //   duration: 800,
-  //   timingFunction: 'ease',
-  //   period: 300
-  // }
   options = options || {};
+  options.duration = options.duration || 800;
+  options.timingFunction = options.timingFunction || 'ease';
+  options.period = options.period || 300;
+  options.wheelDelta = options.wheelDelta || 100;
 
   var children = element.childNodes;
   var sections = [];
@@ -56,12 +54,8 @@ function Onepage(element, options) {
     })(children[i]);
   }
 
-  stylish(
-    element, 'transitionTimingFunction',
-    options.timingFunction || 'ease'
-  );
+  stylish(element, 'transitionTimingFunction', options.timingFunction);
 
-  options.duration = options.duration || 800;
   var prefix = stylish(
     element, 'transitionDuration', options.duration + 'ms'
   );
@@ -91,9 +85,8 @@ Onepage.prototype.setup = function() {
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
     var delta = new Date().getTime() - (me.transitioned || 0);
-    var period = (me.options.period || 300) + me.options.duration;
-    var wheelDelta = me.options.wheelDelta || 100;
-    if (delta > period && Math.abs(e.wheelDelta) > wheelDelta) {
+    var period = me.options.period + me.options.duration;
+    if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
       } else if (me.page >= me.sections.length - 1) {
