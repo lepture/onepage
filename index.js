@@ -77,7 +77,7 @@ emitter(Onepage.prototype);
  */
 Onepage.prototype.setup = function() {
   var me = this;
-  // events binding
+  // binding mousewheel
   events.bind(document, 'mousewheel', function(e) {
     e.preventDefault();
     var now = new Date().getTime();
@@ -86,6 +86,19 @@ Onepage.prototype.setup = function() {
       if (e.wheelDelta > 0) {
         me.move(me.page - 1);
       } else if (me.page >= me.sections.length - 1) {
+        me.move(0);
+      } else {
+        me.move(me.page + 1);
+      }
+    }
+  });
+
+  // binding up and down key
+  events.bind(document, 'keydown', function(e) {
+    if (e.keyCode === 38) {
+      me.move(me.page - 1);
+    } else if (e.keyCode === 40) {
+      if (me.page >= me.sections.length - 1) {
         me.move(0);
       } else {
         me.move(me.page + 1);
