@@ -13,7 +13,7 @@ gh-pages: components
 	@rm -fr gh-pages
 	@mkdir gh-pages
 	@mv build gh-pages/
-	@cp index.html gh-pages/
+	@cp example.html gh-pages/index.html
 	@ghp-import gh-pages -n
 	@rm -fr gh-pages
 
