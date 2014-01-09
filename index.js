@@ -83,17 +83,75 @@ function Onepage(element, options) {
   this.element = element;
   this.pages = pages;
   this.pagination = pagination;
-  this.setup();
+
+  setup(this);
   this.move(this.page);
 }
 emitter(Onepage.prototype);
 
+Onepage.prototype.pageUp = function() {
+  var me = this;
+  var loop = me.options.loop;
+
+  if (me.page > 0) {
+    me.move(me.page - 1);
+  } else if (loop === 'up' || loop === 'both') {
+    me.move(me.pages.length - 1);
+  }
+};
+
+Onepage.prototype.pageDown = function() {
+  var me = this;
+  var loop = me.options.loop;
+  if (me.page < me.pages.length - 1) {
+    me.move(me.page + 1);
+  } else if (loop === 'down' || loop === 'both') {
+    me.move(0);
+  }
+};
+
+/**
+ * Change current page to the given page.
+ */
+Onepage.prototype.move = function(page) {
+  var me = this;
+  // reset page value for safety
+  if (page < 0) {
+    page = 0;
+  }
+  if (page > me.pages.length - 1) {
+    page = me.pages.length - 1;
+  }
+
+  var pagination = me.pagination;
+  if (pagination) {
+    // clear pagination active before
+    var item = pagination.childNodes[me.page];
+    item.className = '';
+    // activate current pagination
+    item = pagination.childNodes[page];
+    item.className = 'active';
+  }
+
+  stylish(
+    me.element, 'transform', 'translate3d(0,-' + page * 100 + '%,0)'
+  );
+
+  // emit events
+  me.emit('move', page);
+  setTimeout(function() {
+    me.emit('end', page);
+  }, me.options.duration);
+
+  // update status
+  me.page = page;
+  me.transitioned = new Date().getTime();
+};
+
 /**
  * Setup everything for onepage scrolling.
  */
-Onepage.prototype.setup = function() {
-  var me = this;
-
+function setup(me) {
   // binding mousewheel
   events.bind(me.element, 'mousewheel', function(e) {
     e.preventDefault();
@@ -163,67 +221,7 @@ Onepage.prototype.setup = function() {
     // pagination be the vertical middle
     pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
   }
-};
-
-Onepage.prototype.pageUp = function() {
-  var me = this;
-  var loop = me.options.loop;
-
-  if (me.page > 0) {
-    me.move(me.page - 1);
-  } else if (loop === 'up' || loop === 'both') {
-    me.move(me.pages.length - 1);
-  }
-};
-
-Onepage.prototype.pageDown = function() {
-  var me = this;
-  var loop = me.options.loop;
-  if (me.page < me.pages.length - 1) {
-    me.move(me.page + 1);
-  } else if (loop === 'down' || loop === 'both') {
-    me.move(0);
-  }
-};
-
-/**
- * Change current page to the given page.
- */
-Onepage.prototype.move = function(page) {
-  var me = this;
-  // reset page value for safety
-  if (page < 0) {
-    page = 0;
-  }
-  if (page > me.pages.length - 1) {
-    page = me.pages.length - 1;
-  }
-
-  var pagination = me.pagination;
-  if (pagination) {
-    // clear pagination active before
-    var item = pagination.childNodes[me.page];
-    item.className = '';
-    // activate current pagination
-    item = pagination.childNodes[page];
-    item.className = 'active';
-  }
-
-  stylish(
-    me.element, 'transform', 'translate3d(0,-' + page * 100 + '%,0)'
-  );
-
-  // emit events
-  me.emit('move', page);
-  setTimeout(function() {
-    me.emit('end', page);
-  }, me.options.duration);
-
-  // update status
-  me.page = page;
-  me.transitioned = new Date().getTime();
-};
-
+}
 
 /**
  * Style an element with respect for browser prefixes.
