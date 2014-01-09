@@ -1,9 +1,9 @@
 /**
  * Onepage
  *
- * A component inspired by Apple iPhone-5c page.
+ * A component inspired by Apple iPhone page.
  *
- * Copyright (c) 2013 by Hsiaoming Yang.
+ * Copyright (c) 2013 - 2014 by Hsiaoming Yang.
  */
 
 var events = require('event');
@@ -47,10 +47,6 @@ function Onepage(element, options) {
           var page = document.createElement('a');
           page.href = '#' + pages.length;
           page.id = 'onepage-pagination-' + pages.length;
-          if (!pages.length) {
-            page.className = 'active';
-          }
-
           // pagination with title
           if (node.title) {
             var explain = document.createElement('span');
@@ -78,7 +74,7 @@ function Onepage(element, options) {
   element.className += ' onepage-container';
 
   // current active page
-  this.page = 0;
+  this.page = parseInt(location.hash.slice(1), 10) || 0;
 
   // last animation time
   this.transitioned = null;
@@ -88,6 +84,7 @@ function Onepage(element, options) {
   this.pages = pages;
   this.pagination = pagination;
   this.setup();
+  this.move(this.page);
 }
 emitter(Onepage.prototype);
 
@@ -96,23 +93,6 @@ emitter(Onepage.prototype);
  */
 Onepage.prototype.setup = function() {
   var me = this;
-  var loop = me.options.loop;
-
-  var pageDown = function() {
-    if (me.page < me.pages.length - 1) {
-      me.move(me.page + 1);
-    } else if (loop === 'down' || loop === 'both') {
-      me.move(0);
-    }
-  };
-
-  var pageUp = function() {
-    if (me.page > 0) {
-      me.move(me.page - 1);
-    } else if (loop === 'up' || loop === 'both') {
-      me.move(me.pages.length - 1);
-    }
-  };
 
   // binding mousewheel
   events.bind(me.element, 'mousewheel', function(e) {
@@ -121,9 +101,9 @@ Onepage.prototype.setup = function() {
     var period = me.options.period + me.options.duration;
     if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
       if (e.wheelDelta > 0) {
-        pageUp();
+        me.pageUp();
       } else {
-        pageDown();
+        me.pageDown();
       }
     }
   });
@@ -142,9 +122,9 @@ Onepage.prototype.setup = function() {
           var deltaX = x - e.touches[0].pageX;
           var deltaY = y - e.touches[0].pageY;
           if (deltaY >= 50) {
-            pageDown();
+            me.pageDown();
           } else if (deltaY <= -50) {
-            pageUp();
+            me.pageUp();
           }
           if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
             events.unbind(me.element, 'touchmove', touchmove);
@@ -160,9 +140,9 @@ Onepage.prototype.setup = function() {
   if (me.options.keyboard) {
     events.bind(document, 'keydown', function(e) {
       if (e.keyCode === 38) {
-        pageUp();
+        me.pageUp();
       } else if (e.keyCode === 40) {
-        pageDown();
+        me.pageDown();
       }
     });
   }
@@ -182,6 +162,27 @@ Onepage.prototype.setup = function() {
     document.body.appendChild(pagination);
     // pagination be the vertical middle
     pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
+  }
+};
+
+Onepage.prototype.pageUp = function() {
+  var me = this;
+  var loop = me.options.loop;
+
+  if (me.page > 0) {
+    me.move(me.page - 1);
+  } else if (loop === 'up' || loop === 'both') {
+    me.move(me.pages.length - 1);
+  }
+};
+
+Onepage.prototype.pageDown = function() {
+  var me = this;
+  var loop = me.options.loop;
+  if (me.page < me.pages.length - 1) {
+    me.move(me.page + 1);
+  } else if (loop === 'down' || loop === 'both') {
+    me.move(0);
   }
 };
 
