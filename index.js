@@ -92,7 +92,6 @@ emitter(Onepage.prototype);
 Onepage.prototype.pageUp = function() {
   var me = this;
   var loop = me.options.loop;
-
   if (me.page > 0) {
     me.move(me.page - 1);
   } else if (loop === 'up' || loop === 'both') {
@@ -146,6 +145,7 @@ Onepage.prototype.move = function(page) {
   // update status
   me.page = page;
   me.transitioned = new Date().getTime();
+  me.element.setAttribute('data-index', page);
 };
 
 /**
