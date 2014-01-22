@@ -45,8 +45,10 @@ function Onepage(element, options) {
 
         if (pagination) {
           var page = document.createElement('a');
-          page.href = '#' + pages.length;
-          page.id = 'onepage-pagination-' + pages.length;
+          var pageId = node.id || pages.length;
+          page.href = '#' + pageId;
+          page.setAttribute('data-page', pages.length);
+          page.id = 'onepage-pagination-' + pageId;
           // pagination with title
           if (node.title) {
             var explain = document.createElement('span');
@@ -74,7 +76,7 @@ function Onepage(element, options) {
   element.className += ' onepage-container';
 
   // current active page
-  this.page = parseInt(location.hash.slice(1), 10) || 0;
+  this.page = 0;
 
   // last animation time
   this.transitioned = null;
@@ -85,6 +87,13 @@ function Onepage(element, options) {
   this.pagination = pagination;
 
   setup(this);
+
+  var hashvalue = location.hash.slice(1);
+  var el = document.getElementById('onepage-pagination-' + hashvalue);
+  if (el) {
+    this.page = parseInt(el.getAttribute('data-page'), 10) || 0;
+  }
+
   this.move(this.page);
 }
 emitter(Onepage.prototype);
