@@ -162,7 +162,7 @@ Onepage.prototype.move = function(page) {
  */
 function setup(me) {
   // binding mousewheel
-  events.bind(me.element, 'mousewheel', function(e) {
+  var mousewheel = function(e) {
     e.preventDefault();
     var delta = new Date().getTime() - (me.transitioned || 0);
     var period = me.options.period + me.options.duration;
@@ -173,7 +173,10 @@ function setup(me) {
         me.pageDown();
       }
     }
-  });
+  };
+  events.bind(me.element, 'mousewheel', mousewheel);
+  // firefox has no mousewheel event
+  events.bind(me.element, 'DOMMouseScroll', mousewheel);
 
   // binding touch event
   events.bind(me.element, 'touchstart', function(e) {
