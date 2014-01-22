@@ -409,9 +409,9 @@ require.register("onepage/index.js", function(exports, require, module){
 /**
  * Onepage
  *
- * A component inspired by Apple iPhone-5c page.
+ * A component inspired by Apple iPhone page.
  *
- * Copyright (c) 2013 by Hsiaoming Yang.
+ * Copyright (c) 2013 - 2014 by Hsiaoming Yang.
  */
 
 var events = require('event');
@@ -453,12 +453,10 @@ function Onepage(element, options) {
 
         if (pagination) {
           var page = document.createElement('a');
-          page.href = '#' + pages.length;
-          page.id = 'onepage-pagination-' + pages.length;
-          if (!pages.length) {
-            page.className = 'active';
-          }
-
+          var pageId = node.id || pages.length;
+          page.href = '#' + pageId;
+          page.setAttribute('data-page', pages.length);
+          page.id = 'onepage-pagination-' + pageId;
           // pagination with title
           if (node.title) {
             var explain = document.createElement('span');
@@ -495,101 +493,36 @@ function Onepage(element, options) {
   this.element = element;
   this.pages = pages;
   this.pagination = pagination;
-  this.setup();
+
+  setup(this);
+
+  var hashvalue = location.hash.slice(1);
+  var el = document.getElementById('onepage-pagination-' + hashvalue);
+  if (el) {
+    this.page = parseInt(el.getAttribute('data-page'), 10) || 0;
+  }
+
+  this.move(this.page);
 }
 emitter(Onepage.prototype);
 
-/**
- * Setup everything for onepage scrolling.
- */
-Onepage.prototype.setup = function() {
+Onepage.prototype.pageUp = function() {
   var me = this;
   var loop = me.options.loop;
-
-  var pageDown = function() {
-    if (me.page < me.pages.length - 1) {
-      me.move(me.page + 1);
-    } else if (loop === 'down' || loop === 'both') {
-      me.move(0);
-    }
-  };
-
-  var pageUp = function() {
-    if (me.page > 0) {
-      me.move(me.page - 1);
-    } else if (loop === 'up' || loop === 'both') {
-      me.move(me.pages.length - 1);
-    }
-  };
-
-  // binding mousewheel
-  events.bind(me.element, 'mousewheel', function(e) {
-    e.preventDefault();
-    var delta = new Date().getTime() - (me.transitioned || 0);
-    var period = me.options.period + me.options.duration;
-    if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
-      if (e.wheelDelta > 0) {
-        pageUp();
-      } else {
-        pageDown();
-      }
-    }
-  });
-
-  // binding touch event
-  events.bind(me.element, 'touchstart', function(e) {
-    var x, y;
-    var touches = e.touches;
-    if (touches && touches.length) {
-      x = touches[0].pageX;
-      y = touches[0].pageY;
-
-      var touchmove = function(e) {
-        e.preventDefault();
-        if (e.touches && e.touches.length) {
-          var deltaX = x - e.touches[0].pageX;
-          var deltaY = y - e.touches[0].pageY;
-          if (deltaY >= 50) {
-            pageDown();
-          } else if (deltaY <= -50) {
-            pageUp();
-          }
-          if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
-            events.unbind(me.element, 'touchmove', touchmove);
-          }
-        }
-      };
-
-      events.bind(me.element, 'touchmove', touchmove);
-    }
-  }, false);
-
-  // binding up and down key
-  if (me.options.keyboard) {
-    events.bind(document, 'keydown', function(e) {
-      if (e.keyCode === 38) {
-        pageUp();
-      } else if (e.keyCode === 40) {
-        pageDown();
-      }
-    });
+  if (me.page > 0) {
+    me.move(me.page - 1);
+  } else if (loop === 'up' || loop === 'both') {
+    me.move(me.pages.length - 1);
   }
+};
 
-  // setup pagination
-  var pagination = me.pagination;
-  if (pagination) {
-    var pages = pagination.getElementsByTagName('a');
-    for (var i = 0; i < pages.length; i++) {
-      (function(i) {
-        events.bind(pages[i], 'click', function(e) {
-          e.preventDefault();
-          me.move(i);
-        });
-      })(i);
-    }
-    document.body.appendChild(pagination);
-    // pagination be the vertical middle
-    pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
+Onepage.prototype.pageDown = function() {
+  var me = this;
+  var loop = me.options.loop;
+  if (me.page < me.pages.length - 1) {
+    me.move(me.page + 1);
+  } else if (loop === 'down' || loop === 'both') {
+    me.move(0);
   }
 };
 
@@ -629,8 +562,86 @@ Onepage.prototype.move = function(page) {
   // update status
   me.page = page;
   me.transitioned = new Date().getTime();
+  me.element.setAttribute('data-index', page);
 };
 
+/**
+ * Setup everything for onepage scrolling.
+ */
+function setup(me) {
+  // binding mousewheel
+  var mousewheel = function(e) {
+    e.preventDefault();
+    var delta = new Date().getTime() - (me.transitioned || 0);
+    var period = me.options.period + me.options.duration;
+    if (delta > period && Math.abs(e.wheelDelta) > me.options.wheelDelta) {
+      if (e.wheelDelta > 0) {
+        me.pageUp();
+      } else {
+        me.pageDown();
+      }
+    }
+  };
+  events.bind(me.element, 'mousewheel', mousewheel);
+  // firefox has no mousewheel event
+  events.bind(me.element, 'DOMMouseScroll', mousewheel);
+
+  // binding touch event
+  events.bind(me.element, 'touchstart', function(e) {
+    var x, y;
+    var touches = e.touches;
+    if (touches && touches.length) {
+      x = touches[0].pageX;
+      y = touches[0].pageY;
+
+      var touchmove = function(e) {
+        e.preventDefault();
+        if (e.touches && e.touches.length) {
+          var deltaX = x - e.touches[0].pageX;
+          var deltaY = y - e.touches[0].pageY;
+          if (deltaY >= 50) {
+            me.pageDown();
+          } else if (deltaY <= -50) {
+            me.pageUp();
+          }
+          if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
+            events.unbind(me.element, 'touchmove', touchmove);
+          }
+        }
+      };
+
+      events.bind(me.element, 'touchmove', touchmove);
+    }
+  }, false);
+
+  // binding up and down key
+  if (me.options.keyboard) {
+    events.bind(document, 'keydown', function(e) {
+      if (e.keyCode === 38) {
+        me.pageUp();
+      } else if (e.keyCode === 40) {
+        me.pageDown();
+      }
+    });
+  }
+
+  // setup pagination
+  var pagination = me.pagination;
+  if (pagination) {
+    var pages = pagination.getElementsByTagName('a');
+    for (var i = 0; i < pages.length; i++) {
+      (function(i) {
+        events.bind(pages[i], 'click', function(e) {
+          e.preventDefault();
+          me.move(i);
+        });
+      })(i);
+    }
+    document.body.appendChild(pagination);
+    // pagination be the vertical middle
+    pagination.style.marginTop = '-' + (pagination.clientHeight / 2) + 'px';
+  }
+}
 
 /**
  * Style an element with respect for browser prefixes.
