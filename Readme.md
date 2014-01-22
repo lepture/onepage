@@ -1,7 +1,7 @@
 
 # onepage
 
-Onepage scroll webpage in component, inspired by Apple iPhone-5c page.
+Onepage scroll webpage in component, inspired by Apple iPhone page.
 
 ## Installation
 
