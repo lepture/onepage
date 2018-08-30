@@ -42,7 +42,7 @@ You can control the animation by options.
 
 ### events
 
-Onepage can trigger events. You can subscribe an event by:
+Onepage can trigger events. You can subscribe to an event by:
 
 ```js
 onepage.on('move', function(page) {
@@ -51,7 +51,7 @@ onepage.on('move', function(page) {
 ```
 
 - **move(page)**: when page moves
-- **end(page)**: when animation end
+- **end(page)**: when animation ends
 
 You can subscribe events with: `on`, `once`. You can remove an event with
 `off`.
@@ -60,7 +60,7 @@ Learn more about event emitter at [component/emitter](https://github.com/compone
 
 ### .move(page)
 
-Move to the the given page number. Page begin with 0.
+Move to the given page number. the page begins with 0.
 
 ```js
 onepage.move(2)
